@@ -1,0 +1,39 @@
+.button1{
+    color: white;
+    background-color: #14A1CC ;
+}
+.button1:hover{
+    color: white;
+    background-color: #118db3 ;
+}
+
+.button1otn{
+    border: 1px solid #14A1CC ;
+    color: #14A1CC ;
+}
+.button1otn:hover{
+    background-color: #14A1CC ;
+    color: white;
+}
+/* Navbar*/
+.navnaw {
+  display: block;
+  padding-top: 7%;
+  color: white;
+  border-bottom: 5px solid #14A1CC;
+}
+.navnaw:hover {
+  background-color: #a3a3a323;
+}
+.navnaw2 {
+  display: block;
+  padding-top: 7%;
+  color: white;
+}
+.navnaw2:hover {
+  background-color: #a3a3a323;
+}
+
+.lebar {
+  padding-bottom: 7%;
+}
