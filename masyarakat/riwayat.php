@@ -1,3 +1,49 @@
+<?php
+
+include '../koneksi.php';
+
+if (isset($_POST['cari'])) {
+    $keyword = $koneksi->real_escape_string($_POST['keyword']); // Mencegah SQL Injection
+
+    // Query pencarian berdasarkan judul_laporan
+    $query = "SELECT * FROM pengaduan WHERE judul_laporan LIKE '%$keyword%'";
+    $result = $koneksi->query($query);
+
+    // Simpan hasil pencarian
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $hasilPencarian[] = $row;
+        }
+    }
+} 
+// Cek jika tombol "reset" ditekan
+else if (isset($_POST['reset'])) {
+    // Query default jika tombol reset ditekan
+    $query = "SELECT * FROM pengaduan";
+    $result = $koneksi->query($query);
+
+    // Simpan hasil data default (semua pengaduan)
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $hasilPencarian[] = $row;
+        }
+    }
+} 
+// Jika tombol cari tidak ditekan dan tombol reset juga tidak, tampilkan semua data
+else {
+    // Query default jika tidak ada pencarian atau reset
+    $query = "SELECT * FROM pengaduan";
+    $result = $koneksi->query($query);
+
+    // Simpan hasil data default
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $hasilPencarian[] = $row;
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,45 +94,53 @@
             </div>
         </div>
 
+<!-- Sesudah ditambahkan fitur search bar -->
+<div>
+<form class="d-flex col-4 mb-4" role="search" method="POST">
+            <input class="form-control me-2 ms-1  " type="search" placeholder="Search" aria-label="Search" name="keyword">
+            <button class="btn button1otn px-3" type="submit" name="cari">Search</button>
+            <button class="btn btn-danger px-3 ms-2" type="submit" name="reset">Reset</button>
+        </form>
+
+<!-- Menampilkan tabel yang sudah di searching, apabila tidak di search menampilkan semua data riwayat pengaduan -->
         <div>
-            <table class=" table table-secondary table-striped text-center">
-                <tr>
-                    <th class="col-1">No</th>
-                    <th class="col-2">Judul Pengaduan</th>
-                    <th class="col-2">Tanggal Pengaduan</th>
-                    <th class="col-2">Status</th>
-                </tr>
-                <?php 
-                include '../koneksi.php';
-                session_start();
-
-                $no=1;
-                $nik = $_SESSION['nik'];
-                $query = mysqli_query($koneksi, "SELECT * FROM pengaduan WHERE nik='$nik' ORDER BY id_pengaduan DESC");
-                while ($data = mysqli_fetch_array($query)){ ?>
-
-                <tr>
-                    <td><?= $no++; ?></td>
-                    <td><?= $data['judul_laporan']; ?></td>
-                    <td><?= $data['tgl_pengaduan']; ?></td>
-                    <td>
-                        <?php
-                        
-                        if($data['status']=='proses'){
-                            echo "<span class='text-warning fs-6 '>Proses</span>";
-                        }else if ($data['status'] == 'selesai') {
-                            echo "<a href='isipengaduan.php' class='btn btn-success py-1 px-3 fs-6 '>Isi Pengaduan</span>";     
-                        }else {
-                            echo "<span class=' text-danger fs-6 '>Menunggu</span>";
-                            
-                        }
-
-                      ?>
-                   
-                </tr>
-
-                <?php  }   ?>
-
+        <?php if (!empty($hasilPencarian)): ?>
+            <table class="table table-secondary table-striped text-center">
+                <thead>
+                    <tr>
+                        <th class="col-1">No</th>
+                        <th class="col-2">Judul Pengaduan</th>
+                        <th class="col-2">Tanggal Pengaduan</th>
+                        <th class="col-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $no = 1; ?>
+                    <?php foreach ($hasilPencarian as $data): ?>
+                        <tr>
+                            <td><?= $no++; ?></td>
+                            <td><?= htmlspecialchars($data['judul_laporan']); ?></td>
+                            <td><?= htmlspecialchars($data['tgl_pengaduan']); ?></td>
+                            <td>
+                                <?php
+                                if($data['status']=='proses'){
+                                    echo "<span class='text-warning fs-6 '>Proses</span>";
+                                }else if ($data['status'] == 'selesai') {
+                                    echo "<a href='isipengaduan.php' class='btn btn-success py-1 px-3 fs-6 '>Isi Pengaduan</span>";     
+                                }else {
+                                    echo "<span class=' text-danger fs-6 '>Menunggu</span>";
+                                    
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+       
+            <?php elseif (isset($_POST['cari'])): ?>
+            <p class="ms-2">Tidak ada hasil untuk pencarian: <strong><?= htmlspecialchars($keyword); ?></strong></p>
+        <?php endif; ?>
 
                 </tr>
             </table>
