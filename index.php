@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <div class="col-12 py-3" style=" background-color: #797E80">
+  <div class="col-12 py-4" style=" background-color: #797E80">
     <h2 class="text-white text-center fw-light fs-4"> "Saya menggunakan teknologi untuk mereformasi perubahan, karena
       bagi saya teknologi itu memudahkan tetapi jangan menghilangkan kemanusiaan". <br>
       <h6 class="text-white text-center fw-light ">- Ridwan Kamil -</h6>
